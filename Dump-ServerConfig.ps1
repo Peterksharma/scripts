@@ -29,12 +29,25 @@
 .NOTES
     Target: Windows PowerShell 5.1+ (works as-is on Server 2016-2025).
 
+.PARAMETER SkipNetwork
+    Omit the NETWORK section. Use when the machine being dumped is a
+    restored/virtual copy whose adapters and IPs do NOT reflect the real
+    server -- capture networking from the physical box separately.
+
 .EXAMPLE
     PS C:\> Set-ExecutionPolicy -Scope Process Bypass -Force
     PS C:\> .\Dump-ServerConfig.ps1
+
+.EXAMPLE
+    # On the backup VM: everything except its (wrong) network config.
+    PS C:\> .\Dump-ServerConfig.ps1 -SkipNetwork
 #>
 
 #Requires -RunAsAdministrator
+
+param(
+    [switch] $SkipNetwork
+)
 
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
@@ -122,6 +135,12 @@ Add-Section 'IDENTITY' {
 }
 
 # ---------------------------------------------------------------------------
+if ($SkipNetwork) {
+    Add-Section 'NETWORK' {
+        'SKIPPED (-SkipNetwork): this machine''s network config is not'
+        'authoritative -- capture networking from the physical server.'
+    }
+} else {
 Add-Section 'NETWORK' {
     Add-Heading 'Adapters'
     Get-NetAdapter | Format-Table Name, InterfaceDescription, ifIndex,
@@ -165,6 +184,7 @@ Add-Section 'NETWORK' {
 
     Add-Heading 'SMB server configuration'
     Get-SmbServerConfiguration | Format-List
+}
 }
 
 # ---------------------------------------------------------------------------

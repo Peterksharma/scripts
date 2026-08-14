@@ -16,8 +16,14 @@ Run either **elevated** on the server (or its booted backup VM):
 
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass -Force
-.\Dump-ServerConfig.ps1      # or .\Export-ServerConfig.ps1
+.\Dump-ServerConfig.ps1                  # full dump (on the real server)
+.\Dump-ServerConfig.ps1 -SkipNetwork     # on the backup VM: skip its
+                                         # non-authoritative network config
+# or .\Export-ServerConfig.ps1 for the folder/zip variant
 ```
+
+Plan for this recovery: run `-SkipNetwork` on the VM now; capture the
+NETWORK section from the physical server later.
 
 Single-file output: `C:\ServerDump\<hostname>-<timestamp>.txt` — copy it off.
 Folder-export output: `C:\ServerDump\<hostname>-<timestamp>\` + a `.zip`;
