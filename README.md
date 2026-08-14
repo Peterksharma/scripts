@@ -16,14 +16,14 @@ Run either **elevated** on the server (or its booted backup VM):
 
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass -Force
-.\Export-ServerConfig.ps1
+.\Dump-ServerConfig.ps1      # or .\Export-ServerConfig.ps1
 ```
 
-Output: `C:\ServerDump\<hostname>-<timestamp>\` + a `.zip` of it.
-Check `_sections.csv` for any FAILED sections and `transcript.txt` for detail.
-Copy the zip off the VM.
+Single-file output: `C:\ServerDump\<hostname>-<timestamp>.txt` — copy it off.
+Folder-export output: `C:\ServerDump\<hostname>-<timestamp>\` + a `.zip`;
+check `_sections.csv` for any FAILED sections and `transcript.txt` for detail.
 
-What's in the dump:
+What the folder export contains (the TXT covers the same ground inline):
 
 | Folder | Contents | Restorable? |
 |---|---|---|
